@@ -8,6 +8,8 @@ Route::group([
     Route::post('/register', 'UserController@register');
     Route::post('/login', 'UserController@login');
     Route::post('/logout', 'UserController@logout')->middleware(['jwt.auth']);
-    Route::post('/me', 'UserController@me')->middleware(['jwt.auth']);
-    Route::post('/forgot', 'UserController@forgotPassword')->name('user.forgot');
+    Route::get('/me', 'UserController@me')->middleware(['jwt.auth']);
+    Route::post('/forgotpassword', 'UserController@forgotPassword')->name('user.forgot');
+    Route::post('/info', 'UserController@changeInformation')->middleware(['jwt.auth']);
+    Route::get('/{name}', 'UserController@find');
 });

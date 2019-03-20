@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
@@ -12,7 +13,12 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'about', 'image',
+        'instagram', 'website', 'twitter'
+    ];
+
+    protected $hidden = [
+        'password'
     ];
 
     public function getJWTIdentifier()
@@ -29,5 +35,24 @@ class User extends Authenticatable implements JWTSubject
         if(!empty($password) ) {
             $this->attributes['password'] = bcrypt($password);
         }
+    }
+
+    public function saveProfileImage($image)
+    {
+        if(!is_null($this->image)) {
+            Storage::disk('public')->delete($this->image);
+        }
+
+        $name = strtolower(str_random(16));
+
+        $firsrtLetter = substr($name, 0, 1);
+
+        $folder = 'avatars/'.$firsrtLetter;
+
+        $filename = $name.'.'.$image->clientExtension();
+
+        $image->storeAs($folder, $filename, 'public');
+
+        return $folder.'/'.$filename;
     }
 }
