@@ -5,11 +5,30 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'prefix' => 'user'
 ],function() {
-    Route::post('/register', 'UserController@register');
-    Route::post('/login', 'UserController@login');
-    Route::post('/logout', 'UserController@logout')->middleware(['jwt.auth']);
-    Route::get('/me', 'UserController@me')->middleware(['jwt.auth']);
-    Route::post('/forgotpassword', 'UserController@forgotPassword')->name('user.forgot');
-    Route::post('/info', 'UserController@changeInformation')->middleware(['jwt.auth']);
-    Route::get('/{name}', 'UserController@find');
+    Route::get('/{name}', 'User\UserController@find');
+});
+
+Route::group([
+    'prefix' => 'auth'
+], function () {
+    Route::post('/login', 'User\AuthController@login');
+    Route::post('/logout', 'User\AuthController@logout')->middleware(['jwt.auth']);
+});
+
+Route::group([
+    'prefix' => 'password'
+], function () {
+    Route::post('/forgot', 'User\PasswordController@forgot')->name('user.forgot');
+});
+
+Route::group([
+    'prefix' => 'register'
+], function () {
+    Route::post('/', 'User\RegisterController@register');
+});
+
+Route::group([
+    'prefix' => 'settings'
+], function () {
+    Route::post('/', 'User\UserInfoController@change')->middleware(['jwt.auth']);
 });
