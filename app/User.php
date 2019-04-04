@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -14,12 +15,22 @@ class User extends Authenticatable implements JWTSubject
 
     protected $fillable = [
         'name', 'email', 'password', 'about', 'image',
-        'instagram', 'website', 'twitter'
+        'instagram', 'website', 'twitter', 'link'
     ];
 
     protected $hidden = [
         'password'
     ];
+
+    public function followings()
+    {
+        return $this->hasMany('App\Following', 'follower_id');
+    }
+
+    public function followers()
+    {
+        return $this->hasMany('App\Following', 'owner_id');
+    }
 
     public function getJWTIdentifier()
     {
@@ -54,5 +65,10 @@ class User extends Authenticatable implements JWTSubject
         $image->storeAs($folder, $filename, 'public');
 
         return $folder.'/'.$filename;
+    }
+
+    public static function generateLink($str)
+    {
+        return substr(strtr(strtolower(Hash::make($str)), ['/' => '', '$' => '', '.' => '']), 5, 35);
     }
 }

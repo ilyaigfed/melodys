@@ -26,9 +26,8 @@ class ChangeInformationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'       => 'unique:users',
-            'password'   => 'min:8|max:50',
-            'r_password' => 'same:password',
+            'name'       => 'max:25',
+            'link'       => 'max:35|regex:/^[a-zA-Z0-9_]+$/',
             'about'      => 'max:255',
             'image'      => 'image|mimes:jpeg,png|max:5120',
             'instagram'  => 'nullable|regex:/^[a-zA-Z0-9._]+$/',
