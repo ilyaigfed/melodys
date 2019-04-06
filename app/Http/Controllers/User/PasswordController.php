@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\User;
 
+use App\Http\Requests\User\ForgetPasswordRequest;
+use App\Mail\ForgetPassword;
 use App\Mail\ResetPassword;
 use App\User;
 use Illuminate\Http\Request;
@@ -9,9 +11,28 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
-class ResetPasswordController extends Controller
+class PasswordController extends Controller
 {
-    public function resetPassword()
+    public function forget(ForgetPasswordRequest $request)
+    {
+        $token = str_random(64);
+
+        $user = User::where('email', '=', $request->email)->first();
+
+        DB::table('password_resets')->updateOrInsert([
+            'email' => $request->email
+        ], [
+            'email'      => $request->email,
+            'token'      => $token,
+            'created_at' => now()->toDateTimeString()
+        ]);
+
+        Mail::to($user)->send(new ForgetPassword($token));
+
+        return response()->json(['message' => 'Link has been sent to your email'], 200);
+    }
+
+    public function reset()
     {
         if(!request()->has('token')) {
             return response()->json(['error' => 'There is no token as parameter'], 400);

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\User;
 
 use App\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FollowingResource extends JsonResource
+class FollowerResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,7 +15,7 @@ class FollowingResource extends JsonResource
      */
     public function toArray($request)
     {
-        $user = User::find($this->owner_id);
+        $user = User::find($this->follower_id);
 
         return [
             'id'    => $user->id,

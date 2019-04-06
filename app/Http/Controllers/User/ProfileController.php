@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Http\Requests\User\ChangeInformationRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Requests\User\UpdateProfileRequest;
+use App\Http\Requests\User\GetProfileRequest;
+use App\Http\Resources\User\ProfileResource;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProfileController extends Controller
 {
-    public function update(ChangeInformationRequest $request)
+    public function update(UpdateProfileRequest $request)
     {
         $data = $request->except(['password', 'email']);
 
@@ -30,24 +31,24 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Information successfully changed'], 200);
     }
 
-    public function findOne($user)
+    public function get(GetProfileRequest $request)
     {
-        switch (request()->by) {
+        switch ($request->by) {
             case 'link':
-                $user = User::where('link', $user)->first();
+                $user = User::where('link', $request->user)->first();
                 break;
             case 'name':
-                $user = User::where('name', $user)->first();
+                $user = User::where('name', $request->user)->first();
                 break;
             case 'email':
-                $user = User::where('email', $user)->first();
+                $user = User::where('email', $request->user)->first();
                 break;
             default:
-                $user = User::find($user);
+                $user = User::find($request->user);
                 break;
         }
         if(!$user) throw new NotFoundHttpException();
-        UserResource::withoutWrapping();
-        return new UserResource($user);
+        ProfileResource::withoutWrapping();
+        return new ProfileResource($user);
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ForgotPassword extends Mailable
+class ForgetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -30,6 +30,6 @@ class ForgotPassword extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.user.forgot')->subject('PASSWORD RECOVERY');
+        return $this->view('emails.user.forget')->subject('PASSWORD RECOVERY');
     }
 }
