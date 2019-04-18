@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Helpers\FileSaver;
 use App\Http\Requests\User\UpdateProfileRequest;
 use App\Http\Requests\User\GetProfileRequest;
 use App\Http\Resources\User\ProfileResource;
+use App\Profile;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,41 +16,36 @@ class ProfileController extends Controller
 {
     public function update(UpdateProfileRequest $request)
     {
-        $data = $request->except(['password', 'email']);
+        $data = $request->except(['user_id']);
 
         $user = auth()->user();
+        $profile = $user->profile;
+
+        ProfileResource::withoutWrapping();
 
         if(!isset($data['image'])) {
-            $user->update($data);
+            $profile->update($data);
 
-            return response()->json(['message' => 'Information successfully changed'], 200);
+            return new ProfileResource($profile);
         }
 
-        $data['image'] = $user->saveProfileImage($request->file('image'));
+        $data['image'] = FileSaver::save((new Profile()), 'image', $request->file('image'), 'avatars');
 
-        $user->update($data);
+        $profile->update($data);
 
-        return response()->json(['message' => 'Information successfully changed'], 200);
+        return new ProfileResource($profile);
     }
 
-    public function get(GetProfileRequest $request)
+    public function get(User $user)
     {
-        switch ($request->by) {
-            case 'link':
-                $user = User::where('link', $request->user)->first();
-                break;
-            case 'name':
-                $user = User::where('name', $request->user)->first();
-                break;
-            case 'email':
-                $user = User::where('email', $request->user)->first();
-                break;
-            default:
-                $user = User::find($request->user);
-                break;
-        }
-        if(!$user) throw new NotFoundHttpException();
         ProfileResource::withoutWrapping();
-        return new ProfileResource($user);
+        return new ProfileResource($user->profile);
+    }
+
+    public function me()
+    {
+        $user = auth()->user();
+        ProfileResource::withoutWrapping();
+        return new ProfileResource($user->profile);
     }
 }

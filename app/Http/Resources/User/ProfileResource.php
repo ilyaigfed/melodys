@@ -22,7 +22,8 @@ class ProfileResource extends JsonResource
             'instagram' => $this->instagram,
             'website'   => $this->website,
             'twitter'   => $this->twitter,
-            'link'      => $this->link
+            'link'      => $this->link,
+            'user_id'   => $this->user_id
         ];
     }
 }

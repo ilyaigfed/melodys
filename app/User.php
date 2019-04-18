@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,16 +12,22 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes;
+
+    private $duration_limit = 7200;
 
     protected $fillable = [
-        'name', 'email', 'password', 'about', 'image',
-        'instagram', 'website', 'twitter', 'link'
+        'email', 'password'
     ];
 
     protected $hidden = [
         'password'
     ];
+
+    public function profile()
+    {
+        return $this->hasOne('App\Profile');
+    }
 
     public function followings()
     {
@@ -30,6 +37,43 @@ class User extends Authenticatable implements JWTSubject
     public function followers()
     {
         return $this->hasMany('App\Following', 'owner_id');
+    }
+
+    public function tracks()
+    {
+        return $this->hasMany('App\Track');
+    }
+
+    public function playlists()
+    {
+        return $this->hasMany('App\Playlist');
+    }
+
+    public function password_reset()
+    {
+        return $this->hasOne('App\PasswordReset');
+    }
+
+    public function isPro()
+    {
+        return $this->hasOne('App\Pro')->count() > 0;
+    }
+
+    public function availableDuration()
+    {
+        if($this->isPro()) return -1;
+
+        $sum = $this->tracks()->sum('duration');
+        $residue = $this->getDurationLimit() - $sum;
+
+        $residue <= 0 ? $residue = 0: null;
+
+        return $residue;
+    }
+
+    public function getDurationLimit()
+    {
+        return $this->duration_limit;
     }
 
     public function getJWTIdentifier()
@@ -48,27 +92,14 @@ class User extends Authenticatable implements JWTSubject
         }
     }
 
-    public function saveProfileImage($image)
+    public function delete()
     {
-        if(!is_null($this->image)) {
-            Storage::disk('public')->delete($this->image);
-        }
+        $this->followers()->delete();
+        $this->followings()->delete();
+        $this->tracks()->delete();
+        $this->playlists()->delete();
+        $this->profile()->delete();
 
-        $name = strtolower(str_random(16));
-
-        $firsrtLetter = substr($name, 0, 1);
-
-        $folder = 'avatars/'.$firsrtLetter;
-
-        $filename = $name.'.'.$image->clientExtension();
-
-        $image->storeAs($folder, $filename, 'public');
-
-        return $folder.'/'.$filename;
-    }
-
-    public static function generateLink($str)
-    {
-        return substr(strtr(strtolower(Hash::make($str)), ['/' => '', '$' => '', '.' => '']), 5, 35);
+        return parent::delete();
     }
 }

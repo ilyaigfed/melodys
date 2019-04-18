@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
+use App\Http\Resources\User\ProfileResource;
+use App\Profile;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -13,10 +15,14 @@ class AuthController extends Controller
     public function register(RegisterRequest $request)
     {
         $user = User::create([
-            'name'     => $request->name,
             'email'    => $request->email,
             'password' => $request->password,
-            'link'     => User::generateLink($request->name)
+        ]);
+
+        $profile = Profile::create([
+            'name'     => $request->name,
+            'link'     => Profile::generateLink($request->name),
+            'user_id'  => $user->id
         ]);
 
         $token = auth()->login($user);
@@ -26,10 +32,10 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->all();
+        $credentials = $request->only(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials))
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->setStatusCode(401);
 
         return $this->respondWithToken($token);
     }
@@ -38,7 +44,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out'], 200);
+        return response()->setStatusCode(200);
     }
 
     protected function respondWithToken($token)

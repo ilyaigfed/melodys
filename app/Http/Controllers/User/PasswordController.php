@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Requests\User\ForgetPasswordRequest;
+use App\Http\Requests\User\ResetPasswordRequest;
 use App\Mail\ForgetPassword;
 use App\Mail\ResetPassword;
+use App\PasswordReset;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -16,54 +18,39 @@ class PasswordController extends Controller
     public function forget(ForgetPasswordRequest $request)
     {
         $token = str_random(64);
+        $user = User::where('email', $request->email)->first();
 
-        $user = User::where('email', '=', $request->email)->first();
-
-        DB::table('password_resets')->updateOrInsert([
-            'email' => $request->email
-        ], [
-            'email'      => $request->email,
-            'token'      => $token,
-            'created_at' => now()->toDateTimeString()
-        ]);
+        if(!$user->password_reset) {
+            PasswordReset::create([
+                'user_id' => $user->id,
+                'token'   => $token
+            ]);
+        } else $user->password_reset->update(['token' => $token]);
 
         Mail::to($user)->send(new ForgetPassword($token));
 
-        return response()->json(['message' => 'Link has been sent to your email'], 200);
+        return response()->setStatusCode(200);
     }
 
-    public function reset()
+    public function reset(ResetPasswordRequest $request)
     {
-        if(!request()->has('token')) {
-            return response()->json(['error' => 'There is no token as parameter'], 400);
-        }
-
-        $token = request()->token;
-
-        $stringInDb = DB::table('password_resets')->where('token', '=', $token)->first();
-
-        if(is_null($stringInDb)) {
-            return response()->json(['error' => 'Invalid token'], 400);
-        }
-
+        $passwordReset = PasswordReset::where('token', $request->token)->first();
         $nowTimestamp = now()->timestamp;
-        $createdTimestamp = strtotime($stringInDb->created_at);
+        $createdTimestamp = strtotime($passwordReset->created_at);
 
         if($nowTimestamp - $createdTimestamp > 86400) {
-            DB::table('password_resets')->where('token', '=', $token)->delete();
+            $passwordReset->delete();
             return response()->json(['error' => 'The token has expired'], 400);
         }
 
         $newPassword = str_random(12);
-
-        $user = User::where('email', '=', $stringInDb->email)->first();
+        $user = $passwordReset->user;
         $user->password = $newPassword;
         $user->save();
-
-        DB::table('password_resets')->where('token', '=', $token)->delete();
+        $passwordReset->delete();
 
         Mail::to($user)->send(new ResetPassword($newPassword));
 
-        return response()->json(['message' => 'Password successfully changed'], 200);
+        return response()->setStatusCode(200);
     }
 }

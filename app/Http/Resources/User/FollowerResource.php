@@ -16,12 +16,14 @@ class FollowerResource extends JsonResource
     public function toArray($request)
     {
         $user = User::find($this->follower_id);
+        $profile = $user->profile;
 
         return [
-            'id'    => $user->id,
-            'name'  => $user->name,
-            'image' => $user->image,
-            'link'  => $user->link
+            'id'      => $profile->id,
+            'name'    => $profile->name,
+            'image'   => $profile->image,
+            'link'    => $profile->link,
+            'user_id' => $profile->user_id
         ];
     }
 }

@@ -20,6 +20,8 @@ class CreateFollowingsTable extends Migration
             $table->integer('follower_id')->unsigned();
             $table->foreign('follower_id')->references('id')->on('users');
             $table->unique(['owner_id', 'follower_id']);
+            $table->softDeletes();
+            $table->timestamp('created_at')->nullable();
         });
     }
 

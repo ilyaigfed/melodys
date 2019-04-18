@@ -2,29 +2,14 @@
 
 namespace App\Http\Requests\User;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Http\Requests\BasicRequest;
 
-class ForgetPasswordRequest extends FormRequest
+class ForgetPasswordRequest extends BasicRequest
 {
-
-    public function authorize()
-    {
-        return true;
-    }
-
     public function rules()
     {
         return [
             'email' => 'required|exists:users'
         ];
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors()
-        ])->setStatusCode(400, 'Validation error'));
     }
 }

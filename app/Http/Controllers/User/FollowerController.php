@@ -11,9 +11,8 @@ use App\Http\Controllers\Controller;
 
 class FollowerController extends Controller
 {
-    public function getSeveral(GetFollowersRequest $request)
+    public function getSeveral(User $user)
     {
-        $user = User::find($request->id);
         return new FollowersResource($user->followers()->paginate(20));
     }
 }
