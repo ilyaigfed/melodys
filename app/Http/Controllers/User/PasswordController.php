@@ -15,6 +15,30 @@ use Illuminate\Support\Facades\Mail;
 
 class PasswordController extends Controller
 {
+    /**
+     * @SWG\Post(
+     *      path="/api/user/password_recovery",
+     *      tags={"User"},
+     *      summary="Восстановление пароля",
+     *
+     *     @SWG\Parameter(
+     *         name="email",
+     *         description="Адрес электронной почты",
+     *         in="query",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Validation error",
+     *     ),
+     * )
+     */
+
     public function forget(ForgetPasswordRequest $request)
     {
         $token = str_random(64);
@@ -32,15 +56,38 @@ class PasswordController extends Controller
         return response()->setStatusCode(200);
     }
 
+    /**
+     * @SWG\Get(
+     *     path="/api/user/password_reset",
+     *     summary="Сброс пароля",
+     *     tags={"User"},
+     *     @SWG\Parameter(
+     *         name="token",
+     *         in="query",
+     *         description="Токен",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Validation error",
+     *     ),
+     * )
+     */
+
     public function reset(ResetPasswordRequest $request)
     {
         $passwordReset = PasswordReset::where('token', $request->token)->first();
         $nowTimestamp = now()->timestamp;
-        $createdTimestamp = strtotime($passwordReset->created_at);
+        $updatedTimestamp = strtotime($passwordReset->updated_at);
 
-        if($nowTimestamp - $createdTimestamp > 86400) {
+        if($nowTimestamp - $updatedTimestamp > 86400) {
             $passwordReset->delete();
-            return response()->json(['error' => 'The token has expired'], 400);
+            return response()->json(['error' => 'Истек срок действия токена.'], 400);
         }
 
         $newPassword = str_random(12);

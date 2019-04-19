@@ -12,4 +12,12 @@ class ResetPasswordRequest extends BasicRequest
             'token' => 'required|exists:password_resets'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'token.required' => 'Поле обязательно для заполнения.',
+            'token.exists'   => 'Токен не существует.'
+        ];
+    }
 }

@@ -20,4 +20,11 @@ class UnfollowRequest extends BasicRequest
             'user' => 'not_in:'.auth()->user()->id
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'user.not_in' => 'Поле не должно равняться id авторизованного пользователя.'
+        ];
+    }
 }

@@ -12,4 +12,12 @@ class ForgetPasswordRequest extends BasicRequest
             'email' => 'required|exists:users'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'email.required' => 'Поле обязательно для заполнения.',
+            'email.exists'   => 'Email не существует.'
+        ];
+    }
 }
