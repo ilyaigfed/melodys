@@ -13,4 +13,12 @@ class LoginRequest extends BasicRequest
             'password' => 'required',
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'email.required'    => 'Поле обязательно для заполнения.',
+            'password.required' => 'Поле обязательно для заполнения.',
+        ];
+    }
 }

@@ -10,6 +10,36 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @SWG\Definition(
+ *  definition="User",
+ *  @SWG\Property(
+ *      property="id",
+ *      type="integer"
+ *  ),
+ *  @SWG\Property(
+ *      property="email",
+ *      type="string"
+ *  ),
+ *  @SWG\Property(
+ *      property="password",
+ *      type="string"
+ *  ),
+ *  @SWG\Property(
+ *      property="created_at",
+ *      type="date-time"
+ *  ),
+ *  @SWG\Property(
+ *      property="updated_at",
+ *      type="date-time"
+ *  ),
+ *  @SWG\Property(
+ *      property="deleted_at",
+ *      type="date-time"
+ *  )
+ * )
+ */
+
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable, SoftDeletes;

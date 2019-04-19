@@ -46,6 +46,6 @@ class AvailableFileDuration implements Rule
      */
     public function message()
     {
-        return 'The minute limit is exceeded.';
+        return 'Длительность аудиофайла не позволяет загрузить его.';
     }
 }

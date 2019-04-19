@@ -12,6 +12,74 @@ use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
+    /**
+     * @SWG\Post(
+     *      path="/api/user/registration",
+     *      tags={"User"},
+     *      summary="Регистрация пользователя",
+     *
+     *     @SWG\Parameter(
+     *         name="email",
+     *         description="Адрес электронной почты",
+     *         in="query",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     @SWG\Parameter(
+     *         name="name",
+     *         description="Никнейм",
+     *         in="query",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="password",
+     *         description="Пароль",
+     *         in="query",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="r_password",
+     *         description="Повтор пароля",
+     *         in="query",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Parameter(
+     *         name="terms",
+     *         description="Согласие с правилами проекта",
+     *         in="query",
+     *         required=true,
+     *         type="boolean"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK",
+     *         examples={
+     *           "application/json": {
+     *             "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC91c2VyXC9sb2dpbiIsImlhdCI6MTU1NTYzMzgxMiwiZXhwIjoxNTU1NjM3NDEyLCJuYmYiOjE1NTU2MzM4MTIsImp0aSI6Ink0VGtxWG05TE40YWRQYnciLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.isl9JCJ7vUuakqRHMWvwlYtpZfSvj7KVNvm4uTj_GcY",
+     *             "token_type": "bearer",
+     *             "expires_in": 3600
+     *           }
+     *         }
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Validation error",
+     *         examples={
+     *           "application/json": {
+     *                   "errors": {
+     *                       "field": {
+     *                           "Поле обязательно для заполнения."
+     *                       }
+     *                   }
+     *           }
+     *         }
+     *     ),
+     * )
+     */
+
     public function register(RegisterRequest $request)
     {
         $user = User::create([
@@ -30,6 +98,57 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    /**
+     * @SWG\Post(
+     *      path="/api/user/login",
+     *      tags={"User"},
+     *      summary="Авторизация пользователя",
+     *
+     *     @SWG\Parameter(
+     *         name="email",
+     *         description="Адрес электронной почты",
+     *         in="query",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     @SWG\Parameter(
+     *         name="password",
+     *         description="Пароль",
+     *         in="query",
+     *         required=true,
+     *         type="string"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK",
+     *         examples={
+     *           "application/json": {
+     *             "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC91c2VyXC9sb2dpbiIsImlhdCI6MTU1NTYzMzgxMiwiZXhwIjoxNTU1NjM3NDEyLCJuYmYiOjE1NTU2MzM4MTIsImp0aSI6Ink0VGtxWG05TE40YWRQYnciLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.isl9JCJ7vUuakqRHMWvwlYtpZfSvj7KVNvm4uTj_GcY",
+     *             "token_type": "bearer",
+     *             "expires_in": 3600
+     *           }
+     *         }
+     *     ),
+     *     @SWG\Response(
+     *         response="401",
+     *         description="Unauthorized",
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Validation error",
+     *         examples={
+     *           "application/json": {
+     *                   "errors": {
+     *                       "field": {
+     *                           "Поле обязательно для заполнения."
+     *                       }
+     *                   }
+     *           }
+     *         }
+     *     ),
+     * )
+     */
+
     public function login(LoginRequest $request)
     {
         $credentials = $request->only(['email', 'password']);
@@ -39,6 +158,29 @@ class AuthController extends Controller
 
         return $this->respondWithToken($token);
     }
+
+    /**
+     * @SWG\Get(
+     *     path="/api/user/logout",
+     *     summary="Разавторизация пользователя",
+     *     tags={"User"},
+     *     @SWG\Parameter(
+     *         name="Authorization",
+     *         in="header",
+     *         description="Токен",
+     *         required=true,
+     *         type="string",
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="OK",
+     *     ),
+     *     @SWG\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     )
+     * )
+     */
 
     public function logout()
     {
@@ -53,6 +195,6 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type'   => 'bearer',
             'expires_in'   => auth()->factory()->getTTL() * 60
-        ]);
+        ], 200);
     }
 }
