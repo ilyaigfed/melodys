@@ -15,11 +15,11 @@ class RegisterRequest extends BasicRequest
     public function rules()
     {
         return [
-            'terms'      => 'accepted',
-            'name'       => 'required|max:30',
             'email'      => 'required|email|unique:users',
             'password'   => 'required|min:8|max:50',
-            'r_password' => 'required|same:password'
+            'r_password' => 'required|same:password',
+            'name'       => 'required|max:30',
+            'terms'      => 'accepted',
         ];
     }
 
