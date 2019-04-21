@@ -154,7 +154,7 @@ class AuthController extends Controller
         $credentials = $request->only(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials))
-            return response()->setStatusCode(401);
+            return response(null, 401);
 
         return $this->respondWithToken($token);
     }
@@ -186,7 +186,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->setStatusCode(200);
+        return response(null, 200);
     }
 
     protected function respondWithToken($token)
