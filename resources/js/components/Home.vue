@@ -1,10 +1,15 @@
 <template>
-    <p>This is the homepage</p>
+
 </template>
 
 <script>
     export default {
-        name: "Home"
+        name: "Home",
+        computed: {
+            message() {
+                return this.$store.getters.WELCOME;
+            }
+        }
     }
 </script>
 

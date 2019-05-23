@@ -6,9 +6,16 @@ use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
 use App\Http\Resources\User\ProfileResource;
 use App\Profile;
+use App\Setting;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -91,6 +98,10 @@ class AuthController extends Controller
             'name'     => $request->name,
             'link'     => Profile::generateLink($request->name),
             'user_id'  => $user->id
+        ]);
+
+        $setting = Setting::create([
+            'user_id' => $user->id
         ]);
 
         $token = auth()->login($user);
@@ -194,7 +205,33 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'bearer',
-            'expires_in'   => auth()->factory()->getTTL() * 60
+            'expires_in'   => auth()->factory()->getTTL() * 60,
+            'user' => $this->guard()->user()->profile
+        ], 200);
+    }
+
+    public function guard()
+    {
+        return Auth::guard();
+    }
+
+    public function refresh()
+    {
+        $token = JWTAuth::getToken();
+        if(!$token) {
+            throw new BadRequestHttpException('Token not provided');
+        }
+
+        try {
+            $token = JWTAuth::refresh($token);
+        } catch(TokenExpiredException $e) {
+            return response(null, 406);
+        }
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in'   => auth()->factory()->getTTL() * 60,
         ], 200);
     }
 }

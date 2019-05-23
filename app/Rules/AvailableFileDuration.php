@@ -14,6 +14,8 @@ class AvailableFileDuration implements Rule
      * @return void
      */
 
+    protected $duration;
+
     public function __construct()
     {
         //
@@ -34,7 +36,9 @@ class AvailableFileDuration implements Rule
 
         $duration = (int) floor((new Mp3Info($value))->duration);
 
-        if($user->availableDuration() + $duration > $user->getDurationLimit()) {
+        $this->duration = $duration;
+
+        if($user->availableDuration() - $duration < 0) {
             return false;
         } else return true;
     }
@@ -46,6 +50,6 @@ class AvailableFileDuration implements Rule
      */
     public function message()
     {
-        return 'Длительность аудиофайла не позволяет загрузить его.';
+        return 'Длительность аудиофайла '.$this->duration.' не позволяет загрузить его.';
     }
 }

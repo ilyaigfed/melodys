@@ -17,7 +17,7 @@ class CreateProsTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned()->unique();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->nullable();
         });
     }
 

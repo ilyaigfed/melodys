@@ -18,21 +18,17 @@ class UploadTrackRequest extends BasicRequest
     {
         return [
             'title'       => 'required|string|max:100',
-            'link'        => 'required|unique:tracks|string|max:35',
             'description' => 'string|max:255',
             'image'       => 'image|mimes:jpeg,png|max:5120',
             'file'        => ['bail', 'required', 'file', 'mimes:mpga', new AvailableFileDuration],
-            'playlist_id' => 'exists:playlists,id'
+            'playlist_id' => 'exists:playlists,id',
+            'genre_id'    => 'exists:genres,id'
         ];
     }
 
     public function messages()
     {
         return [
-            'link.unique'     => 'Ссылка уже используется.',
-            'link.required'   => 'Поле обязательно для заполнения.',
-            'link.string' => 'Поле должно содержать строку.',
-            'link.max'       => 'Поле должно содержать максимум 35 символов.',
             'title.required'  => 'Поле обязательно для заполнения.',
             'title.string'    => 'Поле должно содержать строку.',
             'title.max'       => 'Поле должно содержать максимум 100 символов.',

@@ -1,8 +1,22 @@
-<div style="text-align: center">
-    <h1>PASSWORD RECOVERY FOR THE ACCOUNT</h1>
+<p>
+    Уважаемый(ая) пользователь,
+</p>
 
-    <p>
-        Dear user, you have applied for a password recovery to access your account!<br/>Click the button below to continue:
-    </p>
-    <span>?token={{ $token }}</span>
-</div>
+<p>
+    Вы запросили повторную установку пароля на Melodys, т.к. забыли свой пароль. Если Вы не делали такого запроса, пожалуйста, не отвечайте на данное сообщение.
+    Запрос будет автоматически аннулирован по прошествии 24 часов.
+</p>
+
+<p>
+    Чтобы повторно установить Ваш пароль, пожалуйста, проследуйте на страницу:<br/>
+    <a href="{{ url('/') }}/password_reset/{{ $token }}">{{ url('/') }}/password_reset/{{ $token }}</a>
+</p>
+
+<p>
+    При входе на данную страницу Ваш пароль будет переустановлен, и новый пароль будет отослан Вам по электронной почте.
+</p>
+
+<p>
+    С наилучшими пожеланиями,<br/>
+    Melodys
+</p>

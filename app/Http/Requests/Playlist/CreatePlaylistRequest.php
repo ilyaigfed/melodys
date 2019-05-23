@@ -12,21 +12,17 @@ class CreatePlaylistRequest extends BasicRequest
     {
         return [
             'title'        => 'required|string|max:100',
-            'link'        => 'required|unique:playlists|string|max:35',
             'description' => 'string|max:255',
             'image'       => 'image|mimes:jpeg,png|max:5120',
             'playlist_type_id' => 'required|exists:playlist_types,id',
-            'release_date' => 'date_format:d/m/Y'
+            'release_date' => 'date_format:Y-m-d',
+            'genre_id'    => 'exists:genres,id'
         ];
     }
 
     public function messages()
     {
         return [
-            'link.unique'     => 'Ссылка уже используется.',
-            'link.required'   => 'Поле обязательно для заполнения.',
-            'link.string' => 'Поле должно содержать строку.',
-            'link.max'       => 'Поле должно содержать максимум 35 символов.',
             'title.required'  => 'Поле обязательно для заполнения.',
             'title.string'    => 'Поле должно содержать строку.',
             'title.max'       => 'Поле должно содержать максимум 100 символов.',

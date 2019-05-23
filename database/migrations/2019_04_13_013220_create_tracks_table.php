@@ -16,7 +16,7 @@ class CreateTracksTable extends Migration
         Schema::create('tracks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title', 100);
-            $table->string('link', 35);
+            $table->string('link', 255);
             $table->text('description')->nullable();
             $table->string('image', 255)->nullable();
             $table->string('file', 255)->unique();
@@ -25,6 +25,8 @@ class CreateTracksTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('playlist_id')->unsigned()->nullable();
             $table->foreign('playlist_id')->references('id')->on('playlists');
+            $table->integer('genre_id')->unsigned()->nullable();
+            $table->foreign('genre_id')->references('id')->on('genres');
             $table->softDeletes();
             $table->timestamps();
             $table->unique(['link', 'user_id']);

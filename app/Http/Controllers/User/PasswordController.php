@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Http\Requests\User\ChangePasswordRequest;
 use App\Http\Requests\User\ForgetPasswordRequest;
 use App\Http\Requests\User\ResetPasswordRequest;
 use App\Mail\ForgetPassword;
@@ -53,7 +54,7 @@ class PasswordController extends Controller
 
         Mail::to($user)->send(new ForgetPassword($token));
 
-        return response()->setStatusCode(200);
+        return response(null, 200);
     }
 
     /**
@@ -98,6 +99,14 @@ class PasswordController extends Controller
 
         Mail::to($user)->send(new ResetPassword($newPassword));
 
-        return response()->setStatusCode(200);
+        return response(null, 200);
+    }
+
+    public function change(ChangePasswordRequest $request)
+    {
+        $user = auth()->user();
+        $user->update($request->only(['password']));
+
+        return response(null, 200);
     }
 }

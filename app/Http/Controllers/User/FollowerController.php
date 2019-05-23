@@ -13,6 +13,6 @@ class FollowerController extends Controller
 {
     public function getSeveral(User $user)
     {
-        return new FollowersResource($user->followers()->paginate(20));
+        return new FollowersResource($user->followers);
     }
 }

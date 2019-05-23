@@ -75,6 +75,6 @@ class Profile extends Model
 
     public static function generateLink($str)
     {
-        return substr(strtr(strtolower(Hash::make($str)), ['/' => '', '$' => '', '.' => '']), 5, 35);
+        return 'x'.substr(strtr(strtolower(Hash::make($str)), ['/' => '', '$' => '', '.' => '']), 5, 34);
     }
 }

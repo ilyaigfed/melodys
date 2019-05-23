@@ -46,5 +46,7 @@ class PlaylistTypesSeeder extends Seeder
         DB::table('playlist_types')->insert([
             'name' => 'Лайв',
         ]);
+
+        PlaylistType::reguard();
     }
 }

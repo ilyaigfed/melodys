@@ -14,6 +14,6 @@ class DeleteController extends Controller
         $user->delete();
         auth()->logout();
 
-        return response()->setStatusCode(200);
+        return response(null, 200);
     }
 }

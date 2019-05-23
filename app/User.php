@@ -59,6 +59,21 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne('App\Profile');
     }
 
+    public function photos()
+    {
+        return $this->hasMany('App\UserPhoto')->orderBy('created_at', 'desc');
+    }
+
+    public function posts()
+    {
+        return $this->hasMany('App\UserPost')->orderBy('created_at', 'desc');
+    }
+
+    public function setting()
+    {
+        return $this->hasOne('App\Setting');
+    }
+
     public function followings()
     {
         return $this->hasMany('App\Following', 'follower_id');
@@ -71,7 +86,17 @@ class User extends Authenticatable implements JWTSubject
 
     public function tracks()
     {
-        return $this->hasMany('App\Track');
+        return $this->hasMany('App\Track')->orderBy('created_at', 'desc');
+    }
+
+    public function track_likes()
+    {
+        return $this->hasMany('App\TrackLike');
+    }
+
+    public function playlist_likes()
+    {
+        return $this->hasMany('App\PlaylistLike');
     }
 
     public function playlists()
@@ -129,6 +154,11 @@ class User extends Authenticatable implements JWTSubject
         $this->tracks()->delete();
         $this->playlists()->delete();
         $this->profile()->delete();
+        $this->posts()->delete();
+        $this->photos()->delete();
+        $this->setting()->delete();
+        $this->track_likes()->delete();
+        $this->playlist_likes()->delete();
 
         return parent::delete();
     }

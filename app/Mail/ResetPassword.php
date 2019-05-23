@@ -29,6 +29,6 @@ class ResetPassword extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.user.reset')->subject('PASSWORD RECOVERY');
+        return $this->view('emails.user.reset')->subject('Новый пароль на Melodys');
     }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\Track\UpdateTrackRequest;
 use App\Http\Requests\Track\UploadTrackRequest;
 use App\Http\Resources\Track\TrackResource;
 use App\Pro;
+use App\Profile;
 use App\Track;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -33,6 +34,7 @@ class TrackController extends Controller
         $data['file'] = FileSaver::save((new Track()), 'image',  $request->file('file'), 'tracks');
         $data['user_id'] = $user->id;
         $data['duration'] = (int) floor((new Mp3Info(Storage::disk('public')->path($data['file'])))->duration);
+        $data['link'] = Profile::generateLink($request->title);
 
         $track = Track::create($data);
 

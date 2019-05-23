@@ -65,8 +65,9 @@ class Track extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'title', 'link', 'description',
-        'image', 'file', 'user_id', 'duration'
+        'title', 'link', 'description', 'genre_id',
+        'image', 'file', 'user_id', 'duration',
+        'playlist_id'
     ];
 
     public function user()
@@ -77,6 +78,32 @@ class Track extends Model
     public function playlist()
     {
         return $this->belongsTo('App\Playlist');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany('App\TrackComment')->orderBy('created_at', 'desc');
+    }
+
+    public function genre()
+    {
+        return $this->belongsTo('App\Genre');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany('App\TrackLike');
+    }
+
+    public function isLiked($track_id, $user_id)
+    {
+        if(TrackLike::where([
+            ['user_id', $user_id],
+            ['track_id', $track_id]
+        ])->first()) {
+            return true;
+        }
+        return false;
     }
 
     public function forceDelete()

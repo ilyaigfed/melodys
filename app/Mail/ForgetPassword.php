@@ -30,6 +30,6 @@ class ForgetPassword extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.user.forget')->subject('PASSWORD RECOVERY');
+        return $this->view('emails.user.forget')->subject('Восстановление пароля на Melodys');
     }
 }

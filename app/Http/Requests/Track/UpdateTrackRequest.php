@@ -18,10 +18,11 @@ class UpdateTrackRequest extends BasicRequest
     {
         return [
             'title'       => 'string|max:100',
-            'link'        => 'string|unique:tracks|max:35',
+            'link'        => 'string|unique:tracks|max:255',
             'description' => 'string|max:255',
             'image'       => 'image|mimes:jpeg,png|max:5120',
-            'playlist_id' => 'exists:playlists,id'
+            'playlist_id' => 'exists:playlists,id',
+            'genre_id'    => 'exists:genres,id'
         ];
     }
 
@@ -30,7 +31,7 @@ class UpdateTrackRequest extends BasicRequest
         return [
             'link.unique'     => 'Ссылка уже используется.',
             'link.string' => 'Поле должно содержать строку.',
-            'link.max'       => 'Поле должно содержать максимум 35 символов.',
+            'link.max'       => 'Поле должно содержать максимум 255 символов.',
             'title.string'    => 'Поле должно содержать строку.',
             'title.max'       => 'Поле должно содержать максимум 100 символов.',
             'description.string' => 'Поле должно содержать строку.',

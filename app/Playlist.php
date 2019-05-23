@@ -61,7 +61,43 @@ class Playlist extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'title', 'link', 'description',
+        'title', 'link', 'description', 'genre_id',
         'image', 'user_id', 'release_date', 'playlist_type_id'
     ];
+
+    public function playlist_type()
+    {
+        return $this->belongsTo('App\PlaylistType');
+    }
+
+    public function genre()
+    {
+        return $this->belongsTo('App\Genre');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany('App\PlaylistLike');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
+    public function isLiked($playlist_id, $user_id)
+    {
+        if(PlaylistLike::where([
+            ['user_id', $user_id],
+            ['playlist_id', $playlist_id]
+        ])->first()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function tracks()
+    {
+        return $this->hasMany('App\Track')->orderBy('created_at', 'asc');
+    }
 }

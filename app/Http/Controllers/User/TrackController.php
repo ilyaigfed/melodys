@@ -11,6 +11,6 @@ class TrackController extends Controller
 {
     public function getSeveral(User $user)
     {
-        return new TracksResource($user->tracks()->paginate(10));
+        return new TracksResource($user->tracks);
     }
 }

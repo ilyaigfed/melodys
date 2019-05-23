@@ -15,7 +15,7 @@ class FollowingController extends Controller
 {
     public function getSeveral(User $user)
     {
-        return new FollowingsResource($user->followings()->paginate(20));
+        return new FollowingsResource($user->followings);
     }
 
     public function unfollow(User $user, UnfollowRequest $request)
@@ -24,7 +24,7 @@ class FollowingController extends Controller
 
         Following::where('owner_id', '=', $user->id)->where('follower_id', '=', $me->id)->forceDelete();
 
-        return response()->setStatusCode(200);
+        return response(null, 200);
     }
 
     public function follow(User $user, FollowRequest $request)
@@ -36,7 +36,7 @@ class FollowingController extends Controller
             'follower_id' => $me->id
         ]);
 
-        return response()->setStatusCode(200);
+        return response(null, 200);
     }
 
 }
